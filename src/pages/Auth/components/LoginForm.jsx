@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Mail,
   Lock,
@@ -13,6 +14,7 @@ import { authService } from "../../../services/authService";
 import Swal from "sweetalert2";
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -43,7 +45,7 @@ const LoginForm = () => {
             confirmButtonColor: "#dc2626",
             allowOutsideClick: false,
           });
-          window.location.href = "/admin/profile?tab=security";
+          navigate("/admin/profile?tab=security");
           return;
         }
 
@@ -54,9 +56,9 @@ const LoginForm = () => {
 
         setTimeout(() => {
           if (userRole === "admin" || userRole === "moderator") {
-            window.location.href = "/moderator";
+            navigate("/moderator");
           } else {
-            window.location.href = "/admin";
+            navigate("/admin");
           }
         }, 1000);
       } else {

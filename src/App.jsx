@@ -15,8 +15,14 @@ import ModStatistics from "./pages/moderator/ModStatistics/ModStatistics.JSX";
 import ReviewArticle from "./pages/admin/Review/ReviewArticle";
 import ModModerationList from "./pages/admin/Review/ModModerationList";
 import ReportManager from "./pages/admin/Reports/ReportManager";
-import { Settings } from "lucide-react";
 import SettingsPage from "./pages/admin/Settings/SettingsPage";
+import VNDailyHome from "./pages/reader/Home/components/VNDailyHome";
+import VNDailyDetail from "./pages/reader/Details/VNDailyDetail";
+import CategoryPage from "./pages/reader/Details/CategoryPage";
+import ProfilePage from "./pages/reader/Profile/ProfilePage";
+import BookmarksPage from "./pages/reader/Home/Bookmark/BookmarksPage";
+import PolicyPage from "./pages/reader/PolicyPage";
+import NotFoundPage from "./pages/client/NotFound/NotFoundPage";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
@@ -27,29 +33,33 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Chuyển tất cả về viết thường để so sánh chính xác
   const currentRole = userRole?.toLowerCase();
   const normalizedAllowedRoles = allowedRoles.map((r) => r.toLowerCase());
 
   if (allowedRoles && !normalizedAllowedRoles.includes(currentRole)) {
-    // Nếu là admin thì luôn có quyền vào cả 2 bên (tùy bạn quy định)
     if (currentRole === "admin") return children;
-
-    const fallbackPath = currentRole === "author" ? "/admin" : "/login";
-    return <Navigate to={fallbackPath} replace />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
 };
 
 function App() {
-  const token = localStorage.getItem("token");
-  const userRole = localStorage.getItem("user_role")?.toLowerCase();
-
   return (
     <NotificationProvider>
       <Routes>
+        <Route path="/" element={<VNDailyHome />} />
+        <Route path="/article/:slug" element={<VNDailyDetail />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="/tag/:tagName" element={<CategoryPage />} />
+        <Route path="/search" element={<CategoryPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/bookmarks" element={<BookmarksPage />} />
+        <Route path="/privacy" element={<PolicyPage />} />
+        <Route path="/terms" element={<PolicyPage />} />
+        <Route path="/recruitment" element={<PolicyPage />} />
+        <Route path="/contact-ads" element={<PolicyPage />} />
 
         <Route
           path="/admin"
@@ -76,29 +86,15 @@ function App() {
           }
         >
           <Route index element={<ModDashboard />} />
-
           <Route path="users" element={<UserPage />} />
           <Route path="statistics" element={<ModStatistics />} />
-          <Route path="/moderator/moderation" element={<ModModerationList />} />
-          <Route path="/moderator/review/:id" element={<ReviewArticle />} />
-          <Route path="/moderator/reports" element={<ReportManager />} />
+          <Route path="moderation" element={<ModModerationList />} />
+          <Route path="review/:id" element={<ReviewArticle />} />
+          <Route path="reports" element={<ReportManager />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
 
-        <Route
-          path="/"
-          element={
-            token ? (
-              <Navigate
-                to={userRole === "author" ? "/admin" : "/moderator"}
-                replace
-              />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </NotificationProvider>
   );

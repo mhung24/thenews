@@ -297,12 +297,14 @@ const MyArticles = () => {
                     </td>
                     <td className="px-10 py-6 text-right">
                       <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                        {/* CHỈ CHẶN SỬA KHI TRẠNG THÁI LÀ REJECTED HOẶC CANCEL */}
+                        {/* CHẶN SỬA KHI TRẠNG THÁI LÀ REJECTED, CANCEL HOẶC PUBLISHED */}
                         {art.status === "rejected" ||
-                        art.status === "cancel" ? (
+                        art.status === "cancel" ||
+                        art.status === "published" ? (
                           <button
                             disabled
                             className="p-3 bg-slate-50 text-slate-200 rounded-xl border border-slate-100 cursor-not-allowed"
+                            title="Nội dung đã khóa, không thể chỉnh sửa"
                           >
                             <Lock size={18} />
                           </button>

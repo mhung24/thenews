@@ -21,7 +21,7 @@ const UserPage = () => {
   const [userToEdit, setUserToEdit] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("author"); // Mặc định lọc theo author
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -36,7 +36,7 @@ const UserPage = () => {
         const params = {
           page,
           search: searchTerm,
-          role: roleFilter,
+          role: "author", // Ép buộc lấy mỗi role author
           limit: 10,
         };
         const response = await userService.getUsers(params);
@@ -53,7 +53,7 @@ const UserPage = () => {
         setLoading(false);
       }
     },
-    [searchTerm, roleFilter]
+    [searchTerm] // Loại bỏ roleFilter khỏi dependency vì chúng ta fix cứng author
   );
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const UserPage = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, roleFilter, fetchUsers]);
+  }, [searchTerm, fetchUsers]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.last_page) {
@@ -217,10 +217,10 @@ const UserPage = () => {
             onChange={(e) => setRoleFilter(e.target.value)}
             className="w-full pl-12 pr-6 py-4 bg-white border border-slate-100 rounded-[1.5rem] outline-none appearance-none font-bold text-slate-500 cursor-pointer focus:border-rose-200 shadow-sm"
           >
-            <option value="">Tất cả quyền hạn</option>
+            <option value="author">Chỉ Tác giả (Authors)</option>
+            {/* Giữ nguyên UI nhưng logic fetchUsers chỉ lấy author */}
             <option value="admin">Quản trị viên</option>
             <option value="moderator">Kiểm duyệt viên</option>
-            <option value="author">Tác giả</option>
             <option value="reader">Độc giả</option>
             <option value="banned">Đã bị khóa</option>
           </select>
@@ -229,7 +229,7 @@ const UserPage = () => {
         <button
           onClick={() => {
             setSearchTerm("");
-            setRoleFilter("");
+            setRoleFilter("author");
           }}
           className="flex items-center justify-center gap-2 py-4 bg-slate-100 text-slate-500 rounded-[1.5rem] font-black text-xs hover:bg-slate-200 transition-all"
         >

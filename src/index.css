@@ -84,3 +84,8 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
 }
+
+#fck_detail_lightgallery {
+  width: 100% !important;
+  float: none !important;
+}

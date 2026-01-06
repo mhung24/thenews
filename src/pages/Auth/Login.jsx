@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Import thêm Link và useNavigate
+import { useNavigate, Link } from "react-router-dom";
 import { ChevronLeft, Newspaper } from "lucide-react";
 import LoginForm from "./components/LoginForm";
 
@@ -13,6 +13,8 @@ const Login = () => {
     if (token) {
       if (role === "admin" || role === "moderator") {
         navigate("/moderator", { replace: true });
+      } else if (role === "user") {
+        navigate("/", { replace: true });
       } else {
         navigate("/admin", { replace: true });
       }
@@ -21,13 +23,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-6">
-      {/* <Link
-        to="/"
-        className="fixed top-8 left-8 flex items-center gap-2 text-gray-400 hover:text-red-600 transition-colors font-bold text-xs uppercase tracking-widest"
-      >
-        <ChevronLeft size={16} /> Quay lại trang chủ
-      </Link> */}
-
       <div className="w-full max-w-[900px] bg-white rounded-[2.5rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.08)] overflow-hidden flex flex-col md:flex-row border border-gray-100">
         <div className="w-full md:w-[40%] bg-red-600 p-12 text-white flex flex-col justify-between relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>

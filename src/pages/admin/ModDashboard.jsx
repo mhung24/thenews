@@ -16,6 +16,7 @@ import * as XLSX from "xlsx";
 import { dashboardService } from "../../services/dashboardService";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import Swal from "sweetalert2";
 
 const ModDashboard = () => {
   const [stats, setStats] = useState({
@@ -154,7 +155,12 @@ const ModDashboard = () => {
       saveAs(new Blob([buffer]), fileName);
     } catch (error) {
       console.error(error);
-      alert("Lỗi xuất file!");
+      Swal.fire({
+        icon: "error",
+        title: "Lỗi!",
+        text: "Không thể xuất file báo cáo.",
+        confirmButtonColor: "#e11d48",
+      });
     } finally {
       setIsExporting(false);
       e.target.value = "";
@@ -162,18 +168,64 @@ const ModDashboard = () => {
   };
 
   const handleAction = async (id, type) => {
-    setActionLoading(id);
-    try {
-      if (type === "approve") {
-        await dashboardService.approveArticle(id);
-      } else {
-        await dashboardService.rejectArticle(id);
+    const isApprove = type === "approve";
+
+    const confirmResult = await Swal.fire({
+      title: isApprove ? "Phê duyệt bài viết?" : "Từ chối bài viết?",
+      text: isApprove
+        ? "Bài viết này sẽ được xuất bản lên hệ thống."
+        : "Vui lòng nhập lý do từ chối bài viết này:",
+      icon: isApprove ? "question" : "warning",
+      input: isApprove ? undefined : "textarea",
+      inputPlaceholder: "Nhập lý do tại đây...",
+      showCancelButton: true,
+      confirmButtonColor: isApprove ? "#10b981" : "#e11d48",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: isApprove ? "Duyệt bài" : "Từ chối",
+      cancelButtonText: "Hủy",
+      preConfirm: (note) => {
+        if (!isApprove && !note) {
+          Swal.showValidationMessage("Bạn phải nhập lý do từ chối!");
+        }
+        return note;
+      },
+    });
+
+    if (confirmResult.isConfirmed) {
+      setActionLoading(id);
+      try {
+        const status = isApprove ? "published" : "rejected";
+        const review_note = isApprove
+          ? "Bài viết đã được duyệt."
+          : confirmResult.value;
+
+        await dashboardService.updateArticleStatus(id, {
+          status: status,
+          review_note: review_note,
+        });
+
+        await loadData();
+
+        Swal.fire({
+          icon: "success",
+          title: "Thành công!",
+          text: isApprove
+            ? "Bài viết đã được đăng tải."
+            : "Bài viết đã bị từ chối.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error("Lỗi cập nhật trạng thái:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Thất bại",
+          text: "Có lỗi xảy ra khi cập nhật trạng thái bài viết.",
+          confirmButtonColor: "#e11d48",
+        });
+      } finally {
+        setActionLoading(null);
       }
-      await loadData();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setActionLoading(null);
     }
   };
 
@@ -255,7 +307,6 @@ const ModDashboard = () => {
         />
       </div>
 
-      {/* Danh sách chờ duyệt trải rộng 100% chiều ngang */}
       <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
         <h3 className="font-black text-slate-800 uppercase text-xs mb-6 flex items-center gap-2">
           <Clock size={18} className="text-rose-600" /> Danh sách chờ duyệt (
@@ -328,13 +379,13 @@ const ModDashboard = () => {
   );
 };
 
-const StatCard = ({ label, value, trend, color }) => (
+const StatCard = ({ label, value, trend, color, icon: Icon }) => (
   <div className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-xl hover:shadow-rose-100/20 transition-all">
     <div className="relative z-10">
       <div
         className={`w-10 h-10 ${color} text-white rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-inherit`}
       >
-        <Icon size={20} />
+        {Icon && <Icon size={20} />}
       </div>
       <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
         {label}
@@ -349,7 +400,7 @@ const StatCard = ({ label, value, trend, color }) => (
       </div>
     </div>
     <div className="absolute -right-6 -bottom-6 text-slate-50 opacity-[0.03] group-hover:scale-110 transition-all duration-500">
-      <Icon size={120} />
+      {Icon && <Icon size={120} />}
     </div>
   </div>
 );

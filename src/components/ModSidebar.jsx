@@ -42,14 +42,11 @@ const ModSidebar = () => {
     });
 
     // Debug: Kiểm tra xem Frontend đã kết nối thành công tới Pusher Server chưa
-    echo.connector.pusher.connection.bind("connected", () => {
-      console.log("--- SIDEBAR ĐÃ KẾT NỐI PUSHER THÀNH CÔNG ---");
-    });
+    echo.connector.pusher.connection.bind("connected", () => {});
 
     const channel = echo
       .channel("moderator-notifications")
       .listen(".new-article-submitted", (data) => {
-        console.log("Real-time: Nhận bài viết mới!", data);
         setPendingCount((prev) => prev + 1);
       });
 

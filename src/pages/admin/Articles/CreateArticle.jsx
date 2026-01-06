@@ -282,7 +282,7 @@ const CreateArticle = () => {
 
       notification.success("Thao tác thành công!");
       if (!isEditMode) localStorage.removeItem(STORAGE_KEY);
-      navigate("/admin/articles");
+      navigate("/admin");
     } catch (error) {
       if (error.response?.status === 422) {
         setErrors(error.response.data.errors);
