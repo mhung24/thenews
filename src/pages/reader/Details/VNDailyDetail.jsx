@@ -95,7 +95,6 @@ export default function VNDailyDetail() {
           />
 
           <div className="lg:col-span-8">
-            {/* Gom tất cả vào trong 1 thẻ div bọc để đảm bảo thứ tự từ trên xuống */}
             <article>
               <nav className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-gray-400 mb-6 italic">
                 <RouterLink to="/" className="hover:text-red-700 transition">
@@ -109,27 +108,33 @@ export default function VNDailyDetail() {
                 {article.title}
               </h1>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-8 mb-10 gap-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-red-700 text-white flex items-center justify-center font-serif font-bold text-xl italic shadow-lg shadow-red-100">
-                    {article.author?.name?.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900 text-sm uppercase">
-                      {article.author?.name}
-                    </p>
-                    <p className="text-[11px] text-gray-400 font-bold uppercase mt-0.5 tracking-tighter">
-                      {new Date(article.created_at).toLocaleString("vi-VN")}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-5 text-gray-400 text-[10px] font-black uppercase tracking-widest italic">
-                  <span className="flex items-center gap-1.5">
-                    <Clock size={14} /> 5 PHÚT ĐỌC
-                  </span>
-                  <span className="flex items-center gap-1.5">
-                    <ThumbsUp size={14} /> {article.views || 0} LƯỢT XEM
-                  </span>
+              <div className="flex items-center gap-4">
+                <RouterLink
+                  to={`/author/${article.author?.id}`}
+                  className="group relative"
+                >
+                  {article.author?.avatar ? (
+                    <img
+                      src={`${article.author.avatar}`}
+                      alt={article.author.name}
+                      className="w-12 h-12 rounded-full object-cover shadow-lg shadow-red-100 ring-2 ring-transparent group-hover:ring-red-700 transition-all"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-red-700 text-white flex items-center justify-center font-serif font-bold text-xl italic shadow-lg shadow-red-100 group-hover:scale-105 transition-all">
+                      {article.author?.name?.charAt(0)}
+                    </div>
+                  )}
+                </RouterLink>
+                <div>
+                  <RouterLink
+                    to={`/author/${article.author?.id}`}
+                    className="font-bold text-gray-900 text-sm uppercase hover:text-red-700 transition-colors"
+                  >
+                    {article.author?.name}
+                  </RouterLink>
+                  <p className="text-[11px] text-gray-400 font-bold uppercase mt-0.5 tracking-tighter">
+                    {new Date(article.created_at).toLocaleString("vi-VN")}
+                  </p>
                 </div>
               </div>
 

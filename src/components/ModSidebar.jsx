@@ -83,11 +83,11 @@ const ModSidebar = () => {
           icon: FileWarning,
           label: "Báo cáo vi phạm",
         },
-        // {
-        //   id: "/moderator/comments",
-        //   icon: MessageSquareWarning,
-        //   label: "Duyệt bình luận",
-        // },
+        {
+          id: "/moderator/article",
+          icon: MessageSquareWarning,
+          label: "Quản lý bài viết",
+        },
       ],
     },
     {

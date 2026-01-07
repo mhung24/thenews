@@ -24,6 +24,8 @@ export const useArticle = (slug) => {
         );
         const articleData = res.data.data || res.data;
 
+        console.log(articleData);
+
         let related = [];
         if (articleData.category.id) {
           const relRes = await axios.get(

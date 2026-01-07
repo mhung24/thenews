@@ -23,6 +23,8 @@ import ProfilePage from "./pages/reader/Profile/ProfilePage";
 import BookmarksPage from "./pages/reader/Home/Bookmark/BookmarksPage";
 import PolicyPage from "./pages/reader/PolicyPage";
 import NotFoundPage from "./pages/client/NotFound/NotFoundPage";
+import AuthorProfilePage from "./pages/reader/Profile/AuthorProfilePage";
+import AdminArticleManagement from "./pages/admin/Articles/AdminArticleManagement";
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
@@ -60,6 +62,7 @@ function App() {
         <Route path="/terms" element={<PolicyPage />} />
         <Route path="/recruitment" element={<PolicyPage />} />
         <Route path="/contact-ads" element={<PolicyPage />} />
+        <Route path="/author/:id" element={<AuthorProfilePage />} />
 
         <Route
           path="/admin"
@@ -92,6 +95,7 @@ function App() {
           <Route path="review/:id" element={<ReviewArticle />} />
           <Route path="reports" element={<ReportManager />} />
           <Route path="settings" element={<SettingsPage />} />
+          <Route path="article" element={<AdminArticleManagement />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

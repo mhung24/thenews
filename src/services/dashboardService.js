@@ -25,4 +25,6 @@ export const dashboardService = {
 
   updateArticleStatus: (id, data) =>
     api.patch(`/moderator/articles/${id}/status`, data),
+  getAllArticles: (params) => api.get("/moderator/articles", { params }),
+  deleteArticle: (id) => api.delete(`/moderator/articles/${id}`),
 };
