@@ -88,6 +88,11 @@ const ModSidebar = () => {
           icon: MessageSquareWarning,
           label: "Quản lý bài viết",
         },
+        {
+          id: "/moderator/tags-categories",
+          icon: MessageSquareWarning,
+          label: "Quản lý Tag & Chuyên mục",
+        },
       ],
     },
     {

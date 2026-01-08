@@ -25,7 +25,7 @@ import PolicyPage from "./pages/reader/PolicyPage";
 import NotFoundPage from "./pages/client/NotFound/NotFoundPage";
 import AuthorProfilePage from "./pages/reader/Profile/AuthorProfilePage";
 import AdminArticleManagement from "./pages/admin/Articles/AdminArticleManagement";
-
+import CategoryTagManagement from "./pages/admin/CategoryTagManagement";
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("user_role");
@@ -96,6 +96,7 @@ function App() {
           <Route path="reports" element={<ReportManager />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="article" element={<AdminArticleManagement />} />
+          <Route path="tags-categories" element={<CategoryTagManagement />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />
