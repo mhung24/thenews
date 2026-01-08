@@ -1,0 +1,26 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Pull code FE
+        run: |
+          cd C:\laragon\www\thenews
+          git pull origin main
+
+      - name: Build React App
+        run: |
+          cd C:\laragon\www\thenews
+          npm install
+          npm run build
+
+      - name: Copy .htaccess
+        run: |
+          if (Test-Path "C:\laragon\www\thenews\public\.htaccess") {
+            cp C:\laragon\www\thenews\public\.htaccess C:\laragon\www\thenews\dist\
+          }
