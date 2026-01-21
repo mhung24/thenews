@@ -2,13 +2,11 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Trash2,
-  Eye,
   Loader2,
-  FileText,
-  ExternalLink,
   Inbox,
   ChevronLeft,
   ChevronRight,
+  ExternalLink,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { dashboardService } from "../../../services/dashboardService";
@@ -35,17 +33,22 @@ const AdminPublishedArticles = () => {
           limit: 10,
         });
 
-        // Khớp lại cấu trúc response của Laravel Pagination
-        const result = res.data.data;
-        setArticles(result.data || []);
-        setPagination({
-          current_page: result.current_page,
-          last_page: result.last_page,
-          total: result.total,
-          per_page: result.per_page,
-        });
+        const serverResponse = res.data;
+
+        if (serverResponse && serverResponse.status === 200) {
+          setArticles(serverResponse.data || []);
+
+          const pg = serverResponse.pagination;
+          setPagination({
+            current_page: pg.current_page,
+            last_page: pg.last_page,
+            total: pg.total,
+            per_page: pg.limit,
+          });
+        }
       } catch (error) {
         console.error("Lỗi lấy dữ liệu:", error);
+        setArticles([]);
       } finally {
         setLoading(false);
       }
@@ -55,22 +58,22 @@ const AdminPublishedArticles = () => {
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      fetchArticles(1); // Luôn về trang 1 khi tìm kiếm mới
+      fetchArticles(1);
     }, 500);
-
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, fetchArticles]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.last_page) {
       fetchArticles(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
       title: "Gỡ bài viết công khai?",
-      text: "Bài viết này sẽ bị xóa khỏi hệ thống và không còn hiển thị với độc giả!",
+      text: "Bài viết này sẽ bị xóa khỏi hệ thống!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#ef4444",
@@ -96,6 +99,25 @@ const AdminPublishedArticles = () => {
     }
   };
 
+  // Hàm tạo danh sách các số trang cần hiển thị (tránh hiện quá nhiều nút)
+  const renderPaginationNodes = () => {
+    const nodes = [];
+    const { current_page, last_page } = pagination;
+
+    for (let i = 1; i <= last_page; i++) {
+      if (
+        i === 1 ||
+        i === last_page ||
+        (i >= current_page - 1 && i <= current_page + 1)
+      ) {
+        nodes.push(i);
+      } else if (i === current_page - 2 || i === current_page + 2) {
+        nodes.push("...");
+      }
+    }
+    return [...new Set(nodes)];
+  };
+
   return (
     <div className="p-8 bg-[#fafafa] min-h-screen">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -104,7 +126,9 @@ const AdminPublishedArticles = () => {
             Bài viết đã xuất bản
           </h2>
           <p className="text-slate-500 text-sm font-medium">
-            Quản lý nội dung đang hiển thị công khai ({pagination.total})
+            Tổng cộng:{" "}
+            <span className="text-rose-600 font-bold">{pagination.total}</span>{" "}
+            bài viết
           </p>
         </div>
 
@@ -115,7 +139,7 @@ const AdminPublishedArticles = () => {
           />
           <input
             type="text"
-            placeholder="Tìm theo tiêu đề hoặc tác giả..."
+            placeholder="Tìm theo tiêu đề..."
             className="pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm focus:ring-4 focus:ring-rose-50 outline-none w-72 transition-all shadow-sm"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -127,7 +151,7 @@ const AdminPublishedArticles = () => {
         <table className="w-full text-left">
           <thead className="bg-slate-50/50 border-b border-slate-100">
             <tr className="text-[10px] font-black uppercase text-slate-400 tracking-widest">
-              <th className="px-8 py-5">Nội dung bài viết</th>
+              <th className="px-8 py-5">Nội dung</th>
               <th className="px-6 py-5">Tác giả</th>
               <th className="px-6 py-5">Lượt xem</th>
               <th className="px-6 py-5 text-right">Thao tác</th>
@@ -158,6 +182,9 @@ const AdminPublishedArticles = () => {
                           }`}
                           className="w-full h-full object-cover"
                           alt=""
+                          onError={(e) => {
+                            e.target.src = "https://via.placeholder.com/150";
+                          }}
                         />
                       </div>
                       <div>
@@ -165,22 +192,24 @@ const AdminPublishedArticles = () => {
                           {article.title}
                         </p>
                         <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase">
-                          {article.category?.name} •{" "}
-                          {new Date(article.created_at).toLocaleDateString(
-                            "vi-VN"
-                          )}
+                          {article.category?.name || "Chưa phân loại"} •{" "}
+                          {article.created_at
+                            ? new Date(article.created_at).toLocaleDateString(
+                                "vi-VN"
+                              )
+                            : "---"}
                         </p>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-5">
                     <span className="text-sm font-bold text-slate-600">
-                      {article.author?.name}
+                      {article.author?.name || "N/A"}
                     </span>
                   </td>
                   <td className="px-6 py-5">
                     <span className="text-sm font-black text-slate-700">
-                      {article.views || 0}
+                      {article.views?.toLocaleString() || 0}
                     </span>
                   </td>
                   <td className="px-6 py-5 text-right">
@@ -188,6 +217,7 @@ const AdminPublishedArticles = () => {
                       <a
                         href={`/article/${article.slug}`}
                         target="_blank"
+                        rel="noreferrer"
                         className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
                       >
                         <ExternalLink size={18} />
@@ -210,9 +240,7 @@ const AdminPublishedArticles = () => {
                       <Inbox className="text-slate-300" size={40} />
                     </div>
                     <p className="text-slate-800 font-bold">
-                      {searchTerm
-                        ? `Không có kết quả cho "${searchTerm}"`
-                        : "Trống"}
+                      Không tìm thấy bài viết nào
                     </p>
                   </div>
                 </td>
@@ -222,41 +250,45 @@ const AdminPublishedArticles = () => {
         </table>
       </div>
 
-      {/* Pagination UI */}
-      {!loading && articles.length > 0 && (
-        <div className="flex items-center justify-between mt-6 px-4">
-          <p className="text-slate-400 text-sm font-medium">
-            Trang{" "}
-            <span className="text-slate-700 font-bold">
-              {pagination.current_page}
-            </span>{" "}
-            / {pagination.last_page}
+      {/* PHÂN TRANG NÂNG CẤP */}
+      {!loading && pagination.last_page > 1 && (
+        <div className="flex items-center justify-between mt-8 px-4">
+          <p className="text-slate-400 text-sm font-medium italic">
+            Hiển thị trang {pagination.current_page} trên {pagination.last_page}
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => handlePageChange(pagination.current_page - 1)}
               disabled={pagination.current_page === 1}
-              className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 disabled:opacity-30 hover:text-rose-600"
+              className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 disabled:opacity-30 hover:text-rose-600 transition-all shadow-sm"
             >
               <ChevronLeft size={20} />
             </button>
-            {[...Array(pagination.last_page)].map((_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => handlePageChange(i + 1)}
-                className={`w-10 h-10 rounded-xl text-xs font-black transition-all ${
-                  pagination.current_page === i + 1
-                    ? "bg-rose-600 text-white shadow-lg"
-                    : "bg-white text-slate-400 border border-slate-200"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+
+            {renderPaginationNodes().map((page, index) =>
+              page === "..." ? (
+                <span key={`dots-${index}`} className="px-2 text-slate-400">
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`w-10 h-10 rounded-xl text-xs font-black transition-all ${
+                    pagination.current_page === page
+                      ? "bg-rose-600 text-white shadow-lg shadow-rose-200 scale-110"
+                      : "bg-white text-slate-400 border border-slate-200 hover:border-rose-300 hover:text-rose-600 shadow-sm"
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
+
             <button
               onClick={() => handlePageChange(pagination.current_page + 1)}
               disabled={pagination.current_page === pagination.last_page}
-              className="p-2 bg-white border border-slate-200 rounded-xl text-slate-400 disabled:opacity-30 hover:text-rose-600"
+              className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 disabled:opacity-30 hover:text-rose-600 transition-all shadow-sm"
             >
               <ChevronRight size={20} />
             </button>
