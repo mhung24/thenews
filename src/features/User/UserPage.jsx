@@ -21,7 +21,7 @@ const UserPage = () => {
   const [userToEdit, setUserToEdit] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [roleFilter, setRoleFilter] = useState("author"); // Mặc định lọc theo author
+  const [roleFilter, setRoleFilter] = useState("author");
   const [pagination, setPagination] = useState({
     current_page: 1,
     last_page: 1,
@@ -36,7 +36,7 @@ const UserPage = () => {
         const params = {
           page,
           search: searchTerm,
-          role: "author", // Ép buộc lấy mỗi role author
+          role: roleFilter,
           limit: 10,
         };
         const response = await userService.getUsers(params);
@@ -53,7 +53,7 @@ const UserPage = () => {
         setLoading(false);
       }
     },
-    [searchTerm] // Loại bỏ roleFilter khỏi dependency vì chúng ta fix cứng author
+    [searchTerm, roleFilter]
   );
 
   useEffect(() => {
@@ -218,7 +218,6 @@ const UserPage = () => {
             className="w-full pl-12 pr-6 py-4 bg-white border border-slate-100 rounded-[1.5rem] outline-none appearance-none font-bold text-slate-500 cursor-pointer focus:border-rose-200 shadow-sm"
           >
             <option value="author">Chỉ Tác giả (Authors)</option>
-            {/* Giữ nguyên UI nhưng logic fetchUsers chỉ lấy author */}
             <option value="admin">Quản trị viên</option>
             <option value="moderator">Kiểm duyệt viên</option>
             <option value="reader">Độc giả</option>

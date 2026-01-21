@@ -1,21 +1,30 @@
 import React, { useRef } from "react";
-import { Bold, Italic, Heading2, ImageIcon, List } from "lucide-react";
+import {
+  Bold,
+  Italic,
+  Underline,
+  Heading2,
+  ImageIcon,
+  List,
+  ListOrdered,
+  Quote,
+  Minus,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+} from "lucide-react";
 
-// Đã thêm prop onInput vào đây để nhận hàm đếm từ cha
 const RichTextEditor = ({ editorRef, error, onInput }) => {
   const hiddenFileInput = useRef(null);
 
-  // Hàm thực thi các lệnh định dạng văn bản
   const execCommand = (command, value = null) => {
     if (editorRef.current) {
       editorRef.current.focus();
       document.execCommand(command, false, value);
-      // Gọi onInput thủ công để cập nhật lại state sau khi format
       if (onInput) onInput();
     }
   };
 
-  // Xử lý chèn ảnh vào nội dung
   const handleInsertImage = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -23,27 +32,32 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
       reader.onload = (event) => {
         if (editorRef.current) {
           editorRef.current.focus();
-
-          // Tạo chuỗi HTML cho ảnh
-          const imgTag = `<img src="${event.target.result}" 
-                               alt="content-img" 
-                               style="max-width: 100%; height: auto; border-radius: 0.75rem; margin: 1.5rem auto; display: block;" 
-                          />`;
-
-          // 1. Chèn ảnh vào vị trí con trỏ
-          document.execCommand("insertHTML", false, imgTag);
-
-          // 2. Chèn thêm dòng trống để gõ tiếp
-          document.execCommand("insertHTML", false, "<p><br></p>");
-
-          // Cập nhật lại nội dung cho cha biết
+          const figureTag = `
+            <figure style="margin: 1.5rem auto; text-align: center;">
+              <img src="${event.target.result}" 
+                   alt="content-img" 
+                   style="max-width: 100%; height: auto; border-radius: 0.75rem; display: block; margin: 0 auto;" 
+              />
+              <figcaption style="margin-top: 0.75rem; font-style: italic; font-size: 0.875rem; color: #64748b; font-weight: 500;" contenteditable="true">
+                Nhập ghi chú cho ảnh tại đây...
+              </figcaption>
+            </figure>
+            <p><br></p>
+          `;
+          document.execCommand("insertHTML", false, figureTag);
           if (onInput) onInput();
         }
       };
       reader.readAsDataURL(file);
     }
-    // Reset input
     e.target.value = null;
+  };
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const text = (e.originalEvent || e).clipboardData.getData("text/plain");
+    document.execCommand("insertText", false, text);
+    if (onInput) onInput();
   };
 
   return (
@@ -52,53 +66,115 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
         error ? "border-red-500 shadow-red-100" : "border-red-50"
       }`}
     >
-      {/* TOOLBAR */}
-      <div className="px-6 py-3 bg-gray-50/50 backdrop-blur-sm flex items-center gap-1 border-b border-gray-100 sticky top-0 z-10">
+      {/* TOOLBAR NÂNG CẤP */}
+      <div className="px-6 py-3 bg-gray-50/50 backdrop-blur-sm flex flex-wrap items-center gap-1 border-b border-gray-100 sticky top-0 z-10">
+        {/* Định dạng chữ */}
         <button
           type="button"
           onClick={() => execCommand("bold")}
           className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
-          title="In đậm (Ctrl+B)"
+          title="In đậm"
         >
-          <Bold size={18} />
+          <Bold size={16} />
         </button>
         <button
           type="button"
           onClick={() => execCommand("italic")}
           className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
-          title="In nghiêng (Ctrl+I)"
+          title="In nghiêng"
         >
-          <Italic size={18} />
+          <Italic size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand("underline")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Gạch chân"
+        >
+          <Underline size={16} />
         </button>
         <button
           type="button"
           onClick={() => execCommand("formatBlock", "h2")}
           className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all text-xs font-black"
-          title="Tiêu đề H2"
+          title="Tiêu đề"
         >
-          <Heading2 size={18} />
+          <Heading2 size={16} />
         </button>
 
         <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
+        {/* Căn lề */}
+        <button
+          type="button"
+          onClick={() => execCommand("justifyLeft")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Căn trái"
+        >
+          <AlignLeft size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand("justifyCenter")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Căn giữa"
+        >
+          <AlignCenter size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand("justifyRight")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Căn phải"
+        >
+          <AlignRight size={16} />
+        </button>
+
+        <div className="w-px h-6 bg-gray-200 mx-2"></div>
+
+        {/* Danh sách & Tiện ích */}
         <button
           type="button"
           onClick={() => execCommand("insertUnorderedList")}
           className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
-          title="Danh sách"
+          title="Danh sách chấm"
         >
-          <List size={18} />
+          <List size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand("insertOrderedList")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Danh sách số"
+        >
+          <ListOrdered size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand("formatBlock", "blockquote")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Trích dẫn"
+        >
+          <Quote size={16} />
+        </button>
+        <button
+          type="button"
+          onClick={() => execCommand("insertHorizontalRule")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Đường kẻ ngang"
+        >
+          <Minus size={16} />
         </button>
 
         <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
-        {/* NÚT CHÈN ẢNH */}
+        {/* Chèn ảnh */}
         <button
           type="button"
           onClick={() => hiddenFileInput.current.click()}
           className="flex items-center gap-2 px-3 py-2 hover:bg-white hover:text-red-600 rounded-xl transition-all text-[10px] font-black uppercase tracking-widest"
         >
-          <ImageIcon size={18} className="text-red-500" />
+          <ImageIcon size={16} className="text-red-500" />
           <span>Chèn ảnh</span>
         </button>
 
@@ -111,7 +187,6 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
         />
       </div>
 
-      {/* VÙNG SOẠN THẢO */}
       <div
         className="editor-scrollbar overflow-y-auto"
         style={{ maxHeight: "600px" }}
@@ -119,14 +194,14 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
         <div
           ref={editorRef}
           contentEditable
-          onInput={onInput} // <-- QUAN TRỌNG: Dòng này giúp đếm chữ hoạt động
+          onInput={onInput}
+          onPaste={handlePaste}
           className="min-h-[500px] p-10 outline-none prose prose-red prose-lg max-w-none font-serif leading-relaxed text-slate-700"
           suppressContentEditableWarning
           placeholder="Bắt đầu câu chuyện của bạn tại đây..."
         />
       </div>
 
-      {/* THÔNG BÁO LỖI */}
       {error && (
         <div className="px-10 py-4 bg-red-50 border-t border-red-100 flex items-center gap-2 text-red-600 text-[10px] font-black uppercase tracking-widest animate-in slide-in-from-bottom-2">
           <span className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
@@ -135,24 +210,27 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
       )}
 
       <style>{`
-        .editor-scrollbar::-webkit-scrollbar {
-            width: 5px;
+        .editor-scrollbar::-webkit-scrollbar { width: 5px; }
+        .editor-scrollbar::-webkit-scrollbar-thumb { background: #fee2e2; border-radius: 10px; }
+        [contenteditable]:empty:before { content: attr(placeholder); color: #94a3b8; font-style: italic; }
+        
+        /* Style cho Blockquote trích dẫn */
+        blockquote {
+          border-left: 4px solid #e11d48;
+          padding-left: 1.5rem;
+          font-style: italic;
+          color: #475569;
+          margin: 1.5rem 0;
         }
-        .editor-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
+
+        /* Style cho đường kẻ ngang */
+        hr {
+          border: none;
+          border-top: 2px dashed #f1f5f9;
+          margin: 2rem 0;
         }
-        .editor-scrollbar::-webkit-scrollbar-thumb {
-            background: #fee2e2;
-            border-radius: 10px;
-        }
-        .editor-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #fca5a5;
-        }
-        [contenteditable]:empty:before {
-            content: attr(placeholder);
-            color: #94a3b8;
-            font-style: italic;
-        }
+
+        figcaption:focus { outline: none; background: #f8fafc; border-radius: 4px; }
       `}</style>
     </div>
   );

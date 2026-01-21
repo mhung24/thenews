@@ -22,6 +22,7 @@ export const useArticle = (slug) => {
           `${import.meta.env.VITE_API_URL}/articles/${slug}`,
           config
         );
+
         const articleData = res.data.data || res.data;
 
         console.log(articleData);

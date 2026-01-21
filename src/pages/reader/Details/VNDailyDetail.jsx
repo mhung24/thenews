@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link as RouterLink } from "react-router-dom";
-import { ChevronRight, Clock, ThumbsUp, ArrowUp, Loader2 } from "lucide-react";
+import {
+  ChevronRight,
+  Clock,
+  ThumbsUp,
+  ArrowUp,
+  Loader2,
+  Calendar,
+} from "lucide-react";
 import AuthModal from "../Home/Auth/AuthModal";
 import Footer from "../Home/Footer/Footer";
 import Header from "../Home/components/Header";
@@ -108,7 +115,7 @@ export default function VNDailyDetail() {
                 {article.title}
               </h1>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 mb-10">
                 <RouterLink
                   to={`/author/${article.author?.id}`}
                   className="group relative"
@@ -132,9 +139,19 @@ export default function VNDailyDetail() {
                   >
                     {article.author?.name}
                   </RouterLink>
-                  <p className="text-[11px] text-gray-400 font-bold uppercase mt-0.5 tracking-tighter">
-                    {new Date(article.created_at).toLocaleString("vi-VN")}
-                  </p>
+                  <div className="flex items-center gap-3 text-[11px] text-gray-400 font-bold uppercase mt-0.5 tracking-tighter">
+                    <span className="flex items-center gap-1">
+                      <Calendar size={12} />
+                      {new Date(article.created_at).toLocaleDateString("vi-VN")}
+                    </span>
+                    <span className="flex items-center gap-1 text-red-600">
+                      <Clock size={12} />
+                      {new Date(article.created_at).toLocaleTimeString(
+                        "vi-VN",
+                        { hour: "2-digit", minute: "2-digit" }
+                      )}
+                    </span>
+                  </div>
                 </div>
               </div>
 
@@ -151,11 +168,16 @@ export default function VNDailyDetail() {
                     alt={article.title}
                     className="w-full rounded-[2rem] shadow-2xl object-cover ring-8 ring-gray-50/50"
                   />
+                  {article.image_caption && (
+                    <figcaption className="text-center mt-4 text-gray-500 font-medium italic text-sm">
+                      {article.image_caption}
+                    </figcaption>
+                  )}
                 </figure>
               )}
 
               <div
-                className="prose prose-lg prose-red max-w-none text-gray-800 leading-[1.8] text-justify font-serif"
+                className="article-content-wrapper prose prose-lg prose-red max-w-none text-gray-800 leading-[1.8] text-justify font-serif"
                 style={{
                   fontSize: `18px`,
                   textAlignLast: "left",
@@ -165,6 +187,26 @@ export default function VNDailyDetail() {
                 }}
                 dangerouslySetInnerHTML={{ __html: article.content }}
               />
+
+              <div className="mt-12 flex flex-col items-end border-t border-gray-50 pt-6">
+                <div className="text-right">
+                  <p className="text-lg font-black text-gray-900 uppercase italic tracking-tighter">
+                    {article.author?.name}
+                  </p>
+                  <div className="flex items-center justify-end gap-2 text-gray-400 mt-1">
+                    <Clock size={12} />
+                    <span className="text-[11px] font-bold uppercase tracking-wider">
+                      Cập nhật:{" "}
+                      {new Date(article.created_at).toLocaleTimeString(
+                        "vi-VN",
+                        { hour: "2-digit", minute: "2-digit" }
+                      )}{" "}
+                      -{" "}
+                      {new Date(article.created_at).toLocaleDateString("vi-VN")}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </article>
 
             <div className="flex flex-wrap gap-2 mt-16 pt-10 border-t border-gray-100">
@@ -204,6 +246,50 @@ export default function VNDailyDetail() {
       >
         <ArrowUp size={24} />
       </button>
+
+      <style>{`
+  .article-content-wrapper {
+    max-width: 100% !important;
+  }
+
+  .article-content-wrapper figure {
+    margin: 3rem auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; 
+    width: 100% !important;
+  }
+
+  .article-content-wrapper img {
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+    border-radius: 1rem !important;
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+    margin: 0 auto !important;
+    display: block !important;
+  }
+
+  .article-content-wrapper figcaption {
+    margin-top: 1rem !important;
+    font-style: italic !important;
+    color: #64748b !important; /* Màu slate-500 chuẩn */
+    font-size: 0.9rem !important;
+    line-height: 1.6 !important;
+    text-align: center !important; /* Căn chữ vào giữa */
+    width: 100% !important;
+    display: block !important;
+  }
+
+  .prose blockquote {
+    border-left-color: #b91c1c !important;
+    font-style: italic !important;
+    background-color: #fef2f2 !important;
+    padding: 1.5rem !important;
+    border-radius: 0 1rem 1rem 0 !important;
+    margin: 2rem 0 !important;
+  }
+`}</style>
     </div>
   );
 }
