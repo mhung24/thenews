@@ -26,6 +26,8 @@ import NotFoundPage from "./pages/client/NotFound/NotFoundPage";
 import AuthorProfilePage from "./pages/reader/Profile/AuthorProfilePage";
 import AdminArticleManagement from "./pages/admin/Articles/AdminArticleManagement";
 import CategoryTagManagement from "./pages/admin/CategoryTagManagement";
+import LatestArticles from "./pages/reader/Home/LatestArticles/LatestArticles";
+import PremiumArticles from "./pages/reader/Home/PremiumArticles/PremiumArticles";
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const token = localStorage.getItem("token");
   const userRole = localStorage.getItem("user_role");
@@ -63,6 +65,9 @@ function App() {
         <Route path="/recruitment" element={<PolicyPage />} />
         <Route path="/contact-ads" element={<PolicyPage />} />
         <Route path="/author/:id" element={<AuthorProfilePage />} />
+
+        <Route path="/latest" element={<LatestArticles />} />
+        <Route path="/premium" element={<PremiumArticles />} />
 
         <Route
           path="/admin"

@@ -11,6 +11,7 @@ import {
   Bookmark,
   UserCircle,
   MoreHorizontal,
+  Loader2,
 } from "lucide-react";
 import AuthModal from "../Auth/AuthModal";
 
@@ -23,6 +24,8 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentDate }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [temp, setTemp] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
@@ -33,7 +36,7 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentDate }) => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/categories`
+          `${import.meta.env.VITE_API_URL}/categories`,
         );
         setCategories(res.data.data || res.data);
       } catch (error) {
@@ -75,6 +78,25 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentDate }) => {
   const mainCategories = categories.slice(0, 6);
   const otherCategories = categories.slice(6);
 
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `https://api.open-meteo.com/v1/forecast?latitude=20.42&longitude=106.16&current_weather=true`,
+        );
+
+        setTemp(Math.round(response.data.current_weather.temperature));
+      } catch (error) {
+        console.error("Lỗi lấy thời tiết:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
   return (
     <header className="bg-white border-b-2 border-red-700 sticky top-0 z-50 shadow-sm">
       <AuthModal
@@ -88,8 +110,18 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentDate }) => {
         <div className="container mx-auto px-4 lg:px-8 flex justify-between items-center">
           <div className="flex items-center gap-4">
             <span>{currentDate}</span>
+
             <span className="border-l border-gray-300 pl-4 flex items-center gap-1">
-              <span className="text-orange-500">☀</span> Hà Nội: 28°C
+              {loading ? (
+                <Loader2 size={12} className="animate-spin text-gray-300" />
+              ) : (
+                <>
+                  <span className="text-orange-500 text-sm">☀</span>
+                  <span className="font-bold text-gray-700">
+                    Nam Định: {temp}°C
+                  </span>
+                </>
+              )}
             </span>
           </div>
           <div className="flex gap-4">
@@ -126,7 +158,7 @@ const Header = ({ isMobileMenuOpen, setIsMobileMenuOpen, currentDate }) => {
               <span className="font-serif font-bold text-2xl md:text-3xl text-red-700 tracking-tight italic uppercase">
                 VN Daily
               </span>
-              <span className="text-[10px] md:text-xs text-gray-400 uppercase tracking-widest hidden sm:block">
+              <span className="text-[10px] md:text-xs text-gray-400 tracking-widest hidden sm:block italic">
                 Dòng chảy tin tức
               </span>
             </div>
