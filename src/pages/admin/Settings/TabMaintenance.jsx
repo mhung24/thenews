@@ -30,7 +30,7 @@ const TabMaintenance = () => {
         </div>
       </div>
 
-      {/* Cấu hình Database Snapshot */}
+      {/* Cấu hình Sao lưu dữ liệu */}
       <div className="p-10 bg-slate-900 rounded-[3.5rem] flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5 shadow-2xl">
         <div className="flex items-center gap-6">
           <div className="w-20 h-20 bg-amber-500/10 rounded-[2rem] flex items-center justify-center text-amber-500 border border-amber-500/20">
@@ -38,17 +38,17 @@ const TabMaintenance = () => {
           </div>
           <div>
             <h5 className="text-white font-black uppercase text-lg italic tracking-tight">
-              Database Snapshot
+              Data Archiving
             </h5>
             <p className="text-slate-500 font-bold text-xs mt-1">
-              Xuất cấu trúc và dữ liệu SQL hiện tại để lưu trữ.
+              Lưu trữ và đóng gói dữ liệu hệ thống định kỳ.
             </p>
           </div>
         </div>
 
         <button
-          className="px-10 py-5 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-3 group opacity-50 cursor-not-allowed"
-          title="Tính năng đang được phát triển"
+          className="px-10 py-5 bg-white/5 border border-white/10 text-white rounded-[1.5rem] font-black text-[10px] uppercase tracking-widest transition-all flex items-center gap-3 group opacity-50 cursor-not-allowed"
+          disabled
         >
           Đang phát triển
           <ChevronRight
