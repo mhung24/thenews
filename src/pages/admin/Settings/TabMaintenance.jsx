@@ -7,7 +7,7 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
-import SqlViewer from "../SqlViewer/SqlViewer";
+// import SqlViewer from "../SqlViewer/SqlViewer";
 
 const TabMaintenance = () => {
   const [showSqlViewer, setShowSqlViewer] = useState(false);
@@ -21,14 +21,13 @@ const TabMaintenance = () => {
         >
           <X size={16} /> Đóng trình xem SQL
         </button>
-        <SqlViewer />
+        {/* <SqlViewer /> */}
       </div>
     );
   }
 
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
-      {/* Box Bảo trì cũ của Hùng */}
       <div className="p-12 bg-white border-2 border-slate-50 rounded-[3.5rem] shadow-sm flex flex-col md:flex-row items-center gap-12">
         <div className="w-40 h-40 bg-rose-50 rounded-[3rem] flex items-center justify-center text-rose-500 relative shrink-0">
           <div className="absolute inset-0 bg-rose-500/10 animate-ping rounded-[3rem]"></div>
