@@ -12,6 +12,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
 } from "lucide-react";
 
 const RichTextEditor = ({ editorRef, error, onInput }) => {
@@ -21,6 +22,7 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
     if (editorRef.current) {
       editorRef.current.focus();
       document.execCommand(command, false, value);
+
       if (onInput) onInput();
     }
   };
@@ -66,9 +68,7 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
         error ? "border-red-500 shadow-red-100" : "border-red-50"
       }`}
     >
-      {/* TOOLBAR NÂNG CẤP */}
       <div className="px-6 py-3 bg-gray-50/50 backdrop-blur-sm flex flex-wrap items-center gap-1 border-b border-gray-100 sticky top-0 z-10">
-        {/* Định dạng chữ */}
         <button
           type="button"
           onClick={() => execCommand("bold")}
@@ -104,7 +104,6 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
 
         <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
-        {/* Căn lề */}
         <button
           type="button"
           onClick={() => execCommand("justifyLeft")}
@@ -129,10 +128,17 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
         >
           <AlignRight size={16} />
         </button>
+        <button
+          type="button"
+          onClick={() => execCommand("justifyFull")}
+          className="p-2 hover:bg-white hover:text-red-600 rounded-xl transition-all"
+          title="Căn đều hai bên"
+        >
+          <AlignJustify size={16} />
+        </button>
 
         <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
-        {/* Danh sách & Tiện ích */}
         <button
           type="button"
           onClick={() => execCommand("insertUnorderedList")}
@@ -168,7 +174,6 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
 
         <div className="w-px h-6 bg-gray-200 mx-2"></div>
 
-        {/* Chèn ảnh */}
         <button
           type="button"
           onClick={() => hiddenFileInput.current.click()}
@@ -214,7 +219,6 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
         .editor-scrollbar::-webkit-scrollbar-thumb { background: #fee2e2; border-radius: 10px; }
         [contenteditable]:empty:before { content: attr(placeholder); color: #94a3b8; font-style: italic; }
         
-        /* Style cho Blockquote trích dẫn */
         blockquote {
           border-left: 4px solid #e11d48;
           padding-left: 1.5rem;
@@ -223,7 +227,6 @@ const RichTextEditor = ({ editorRef, error, onInput }) => {
           margin: 1.5rem 0;
         }
 
-        /* Style cho đường kẻ ngang */
         hr {
           border: none;
           border-top: 2px dashed #f1f5f9;

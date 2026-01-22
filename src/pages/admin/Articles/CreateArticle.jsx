@@ -83,6 +83,7 @@ const CreateArticle = () => {
 
           if (editorRef.current) {
             editorRef.current.innerHTML = data.content;
+
             handleEditorInput();
           }
 
@@ -185,6 +186,7 @@ const CreateArticle = () => {
           tags: selectedTags,
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(draftData));
+
         if (hasDraft) setHasDraft(false);
       }
     }, 5000);
@@ -200,7 +202,7 @@ const CreateArticle = () => {
     setSelectedTags((prev) =>
       prev.includes(tagId)
         ? prev.filter((id) => id !== tagId)
-        : [...prev, tagId]
+        : [...prev, tagId],
     );
   };
 
