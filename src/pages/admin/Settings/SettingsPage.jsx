@@ -10,7 +10,6 @@ import {
   Database,
   Server,
 } from "lucide-react";
-import TabMaintenance from "./TabMaintenance";
 import TabApi from "./TabApi";
 import TabEmail from "./TabEmail";
 import TabGeneral from "./TabGeneral";
@@ -40,13 +39,6 @@ const SettingsPage = () => {
       icon: <Zap size={18} />,
       color: "text-amber-500",
       component: <TabApi />,
-    },
-    {
-      id: "maintenance",
-      label: "Hệ thống",
-      icon: <Activity size={18} />,
-      color: "text-emerald-500",
-      component: <TabMaintenance />,
     },
   ];
 
