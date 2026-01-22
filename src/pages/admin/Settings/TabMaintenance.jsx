@@ -7,7 +7,6 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
-// import SqlViewer from "../SqlViewer/SqlViewer";
 
 const TabMaintenance = () => {
   const [showSqlViewer, setShowSqlViewer] = useState(false);
@@ -21,7 +20,6 @@ const TabMaintenance = () => {
         >
           <X size={16} /> Đóng trình xem SQL
         </button>
-        {/* <SqlViewer /> */}
       </div>
     );
   }
