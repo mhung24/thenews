@@ -1,15 +1,16 @@
 import React from "react";
-import {
-  AlertTriangle,
-  ShieldAlert,
-  Database,
-  ChevronRight,
-} from "lucide-react";
+// import {
+//   AlertTriangle,
+//   ShieldAlert,
+//   Database,
+//   ChevronRight,
+// } from "lucide-react";
 
 const TabMaintenance = () => {
   return (
-    <div className="space-y-10 animate-in fade-in duration-500">
-      {/* Cấu hình Bảo trì hệ thống */}
+    <>
+      {/* <p>Đang phát triển</p>
+     <div className="space-y-10 animate-in fade-in duration-500">
       <div className="p-12 bg-white border-2 border-slate-50 rounded-[3.5rem] shadow-sm flex flex-col md:flex-row items-center gap-12">
         <div className="w-40 h-40 bg-rose-50 rounded-[3rem] flex items-center justify-center text-rose-500 relative shrink-0">
           <div className="absolute inset-0 bg-rose-500/10 animate-ping rounded-[3rem]"></div>
@@ -29,8 +30,6 @@ const TabMaintenance = () => {
           </div>
         </div>
       </div>
-
-      {/* Cấu hình Sao lưu dữ liệu */}
       <div className="p-10 bg-slate-900 rounded-[3.5rem] flex flex-col md:flex-row items-center justify-between gap-8 border border-white/5 shadow-2xl">
         <div className="flex items-center gap-6">
           <div className="w-20 h-20 bg-amber-500/10 rounded-[2rem] flex items-center justify-center text-amber-500 border border-amber-500/20">
@@ -57,7 +56,8 @@ const TabMaintenance = () => {
           />
         </button>
       </div>
-    </div>
+    </div> */}
+    </>
   );
 };
 
